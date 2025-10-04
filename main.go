@@ -13,9 +13,14 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5" // JWT
 	"github.com/joho/godotenv"
+
+	// "github.com/joho/godotenv"
+	"go-echo/pkg/middleware"
+
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+
+	// "github.com/labstack/echo/v4"
 	_ "github.com/lib/pq"
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
@@ -23,7 +28,7 @@ import (
 // =====================
 // JWT Config
 // =====================
-var jwtSecret = []byte("my-secret-key") // ganti di .env biar aman
+var jwtSecret = []byte("my-super-secret") // ganti di .env biar aman
 
 // Struct untuk claim JWT
 type JwtCustomClaims struct {
@@ -66,7 +71,7 @@ var db *sql.DB
 // Main Function
 // =====================
 func main() {
-	err := godotenv.Load(".env", "config/.env")
+	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
@@ -89,25 +94,26 @@ func main() {
 
 	r := e.Group("/")
 
-	// // Protect all routes except login & swagger
-	// r.Use(middleware.JWTWithConfig(middleware.JWTConfig{
-	// 	SigningKey: jwtSecret,
-	// }))
-	r.Use(echojwt.WithConfig(echojwt.Config{
+	// Protect all routes except login & swagger
+	r.Use(middleware.JWTWithConfig(middleware.JWTConfig{
+		SigningKey: jwtSecret,
+	}))
+
+	e.Use(echojwt.WithConfig(echojwt.Config{
 		SigningKey: jwtSecret,
 	}))
 
 	// Routes
-	r.GET("", func(c echo.Context) error {
+	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Welcome to the User API with JWT")
 	})
-	r.GET("users", GetUsers)
-	r.GET("users/:id", GetUserByID)
-	r.POST("users", CreateUser)
-	r.PUT("users/:id", UpdateUser)
-	r.DELETE("users/:id", DeleteUser)
+	e.GET("users", GetUsers)
+	e.GET("users/:id", GetUserByID)
+	e.POST("users", CreateUser)
+	e.PUT("users/:id", UpdateUser)
+	e.DELETE("users/:id", DeleteUser)
 
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(":7070"))
 }
 
 // =====================

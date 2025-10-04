@@ -18,7 +18,7 @@ func (s *Service) GenerateToken(username string) (string, error) {
 	claims := &JwtCustomClaims{
 		Username: username,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)), // Token berlaku 24 jam
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 30)), // Token berlaku 120 detik
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}

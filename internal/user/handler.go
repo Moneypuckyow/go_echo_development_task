@@ -49,21 +49,38 @@ func (h *Handler) CreateUser(c echo.Context) error {
 
 func (h *Handler) UpdateUser(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
-	var u User
+
+	// Buat struct patch (pakai pointer biar bisa deteksi nil)
+	var u UserUpdate
 	if err := c.Bind(&u); err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": "Invalid input"})
 	}
-	if err := c.Validate(&u); err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+
+	// Kalau PUT → semua field harus ada (validate required)
+	if c.Request().Method == http.MethodPut {
+		if err := c.Validate(&u); err != nil {
+			return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+		}
 	}
+
 	u.ID = id
-	rows, err := h.service.Update(u)
+
+	// Service layer yang handle logic beda PUT vs PATCH
+	var rows int64
+	var err error
+	if c.Request().Method == http.MethodPut {
+		rows, err = h.service.UpdateFull(u) // replace full
+	} else {
+		rows, err = h.service.UpdatePartial(u) // update sebagian
+	}
+
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
 	}
 	if rows == 0 {
 		return c.JSON(http.StatusNotFound, echo.Map{"error": "User not found"})
 	}
+
 	return c.JSON(http.StatusOK, u)
 }
 
@@ -90,6 +107,7 @@ func RegisterRoutes(g *echo.Group, db interface {
 	g.GET("users", h.GetUsers)
 	g.GET("users/:id", h.GetUserByID)
 	g.POST("users", h.CreateUser)
+	g.PATCH("users/:id", h.UpdateUser)
 	g.PUT("users/:id", h.UpdateUser)
 	g.DELETE("users/:id", h.DeleteUser)
 }

@@ -1,0 +1,1 @@
+curl -X DELETE "http://localhost:9090/users/0" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNzU5NTk3MTQ3LCJpYXQiOjE3NTk1OTUzNDd9.kvxI9KP31oQ0IWDxeK12MLvbNiR1ZPOvvXk85iue9wU" -H "Accept: application/json"

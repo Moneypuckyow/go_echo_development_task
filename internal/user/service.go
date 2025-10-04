@@ -20,8 +20,12 @@ func (s *Service) Create(u User) error {
 	return s.repo.Create(u)
 }
 
-func (s *Service) Update(u User) (int64, error) {
-	return s.repo.Update(u)
+func (s *Service) UpdateFull(u UserUpdate) (int64, error) {
+	return s.repo.UpdateFull(u)
+}
+
+func (s *Service) UpdatePartial(u UserUpdate) (int64, error) {
+	return s.repo.UpdatePartial(u)
 }
 
 func (s *Service) Delete(id int) (int64, error) {
