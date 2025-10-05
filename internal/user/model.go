@@ -13,3 +13,13 @@ type UserUpdate struct {
 	Email        *string `json:"email,omitempty"`
 	DepartmentID *int    `json:"department_id,omitempty"`
 }
+
+// ErrorResponse represents error response
+type ErrorResponse struct {
+	Error string `json:"error" example:"User not found"`
+}
+
+// SuccessResponse represents success message
+type SuccessResponse struct {
+	Message string `json:"message" example:"User deleted successfully"`
+}

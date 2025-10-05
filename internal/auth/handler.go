@@ -42,35 +42,46 @@ func NewHandler(service *Service, db *sql.DB) *Handler {
 	}
 }
 
+// Login godoc
+// @Summary      User login
+// @Description  Authenticate user and return token
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        credentials body LoginRequest true "Login credentials"
+// @Success      200 {object} LoginResponse
+// @Failure      400 {object} ErrorResponse
+// @Failure      401 {object} ErrorResponse
+// @Router       /login [post]
 func (h *Handler) Login(c echo.Context) error {
 	var req LoginRequest
 
 	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": "Invalid input"})
+		return c.JSON(http.StatusBadRequest, ErrorResponse{Error: "Invalid input"})
 	}
 	if err := c.Validate(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+		return c.JSON(http.StatusBadRequest, ErrorResponse{Error: err.Error()})
 	}
 
-	// Validasi username dan password dari environment variables
+	// Validasi username dan password
 	if req.Username != h.loginUser.Username || req.Password != h.loginUser.Password {
-		return c.JSON(http.StatusUnauthorized, echo.Map{
-			"error": "Invalid username or password",
+		return c.JSON(http.StatusUnauthorized, ErrorResponse{
+			Error: "Invalid username or password",
 		})
 	}
 
-	// Generate token jika login berhasil
+	// Generate token
 	token, err := h.service.GenerateToken(req.Username)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"error": "Failed to generate token",
+		return c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Error: "Failed to generate token",
 		})
 	}
 
-	return c.JSON(http.StatusOK, echo.Map{
-		"message": "Login successful",
-		"token":   token,
-		"user":    req.Username,
+	return c.JSON(http.StatusOK, LoginResponse{
+		Message: "Login successful",
+		Token:   token,
+		User:    req.Username,
 	})
 }
 

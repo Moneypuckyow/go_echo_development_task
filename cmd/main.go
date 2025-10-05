@@ -2,6 +2,7 @@ package main
 
 import (
 	"go-echo/config"
+	_ "go-echo/docs"
 	"go-echo/internal/auth"
 	"go-echo/internal/user"
 	"go-echo/pkg/middleware"
@@ -12,6 +13,23 @@ import (
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
+// @title           Go Echo API
+// @version         1.0
+// @description     RESTful API for user management with JWT authentication
+
+// @contact.name   API Support
+// @contact.email  support@example.com
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:9090
+// @BasePath  /
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Enter your bearer token in the format **Bearer &lt;token&gt;**
 func main() {
 	// Load config
 	cfg := config.Load()
