@@ -11,8 +11,6 @@ This API related to Database schema on this repository https://github.com/Moneyp
     DB_PORT=
     JWT_SECRET=
     DB_SSLMODE=disable
-    # Login Credentials
     LOGIN_USERNAME=
     LOGIN_PASSWORD=
-
 2. go run cmd/main.go to run the project
